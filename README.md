@@ -4,7 +4,7 @@ This project implements an intelligent one-day tour planning assistant that dyna
 
 ## Features
 - Personalized itinerary suggestions tailored to user preferences.
-- Memory management using **LLM-generated triplets** stored in a **Neo4j graph database**.
+<!-- - Memory management using **LLM-generated triplets** stored in a **Neo4j graph database**. -->
 - Real-time dynamic updates to the itinerary based on user feedback.
 - Supports at least three distinct user personas with unique preferences.
 
@@ -35,16 +35,16 @@ streamlit run app.py
 
 **Implementation Approach**
 
-* **Graph Database:**
+<!-- * **Graph Database:**
     * Utilize Neo4j to store and manage personas, traits, and user preferences.
     * Model personas with their associated traits (preferred activities, interests) as nodes and relationships.
-    * Store user preferences (city, time_range, budget, interests, starting_point) as nodes and relationships.
+    * Store user preferences (city, time_range, budget, interests, starting_point) as nodes and relationships. -->
 
 * **LLM Integration:**
     * Employ an LLM (e.g., llama3-8b-8192) for:
         * **User Interaction:** Handling user messages, providing information, and guiding the conversation.
         * **Preference Extraction:** Extracting user preferences from conversation history, considering persona traits.
-
+<!-- 
 * **Workflow:**
     * **Initialize Personas:** Create persona nodes and their associated trait nodes in the graph.
     * **User Interaction:**
@@ -54,4 +54,4 @@ streamlit run app.py
     * **Personalized Recommendations:** 
         * Use the graph to retrieve relevant information (e.g., persona preferences, user preferences) for personalized recommendations.
 **Implementation Workflow**
-<img src="tour_plan.png" alt="Flowchart of the Tour Planning Process" align="center" width="500px">
+<img src="tour_plan.png" alt="Flowchart of the Tour Planning Process" align="center" width="500px"> -->
