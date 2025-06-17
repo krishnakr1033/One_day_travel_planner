@@ -1,4 +1,4 @@
-from llm import user_info_agent, extract_preferences  
+from llm import user_info_agent, run_with_weather_agent  
 
 def process_message(user_message: str, message_history: list) -> str:  
     """  
@@ -13,12 +13,18 @@ def process_message(user_message: str, message_history: list) -> str:
         # # # # str: Assistant's response   
     """  
 
-    response = user_info_agent(user_message, message_history)  
-
     combined_messages = " ".join([msg['content'] for msg in message_history + [{"role": "user", "content": user_message}] if msg['role'] == "user"])  
 
-    preferences = extract_preferences(combined_messages)  
- 
+    result = run_with_weather_agent(combined_messages)
+    preferences = result.get("preferences", {})
+    weather = result.get("weather", None)
+
+    response = user_info_agent(
+        user_message=user_message,
+        message_history=message_history,
+        weather_json=weather
+    )   
+
     if isinstance(preferences, dict) and "error" not in preferences:  
         all_fields_present = all([  
             preferences.get("city"),  

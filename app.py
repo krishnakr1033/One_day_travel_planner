@@ -9,12 +9,18 @@ def init_session_state():
     if 'preferences' not in st.session_state:  
         st.session_state.preferences = {}  
 
-def update_preferences():  
-    if st.session_state.messages:  
-        extracted_prefs = extract_preferences(st.session_state.messages)  
-        st.session_state.preferences.update(extracted_prefs)  
+def update_preferences():
+    if st.session_state.messages:
+        # Combine user messages into a single string for preference extraction
+        combined_user_input = " ".join(
+            msg["content"] for msg in st.session_state.messages if msg["role"] == "user"
+        )
+        extracted_prefs = extract_preferences(combined_user_input)
+        if isinstance(extracted_prefs, dict) and "error" not in extracted_prefs:
+            st.session_state.preferences.update(extracted_prefs)
 
 def main():  
+    st.set_page_config(page_title="Tour Planner", page_icon="🌍")
     st.title("🌍 Tour Planner")  
 
     # Initialize session state  
@@ -22,24 +28,26 @@ def main():
 
     # Sidebar with preferences display  
     with st.sidebar:  
-        # st.title("Current Preferences")  
-        # if st.session_state.preferences:  
-        #     st.json(st.session_state.preferences)  
+        st.subheader("Your Travel Preferences")
+        if st.session_state.preferences:
+            st.json(st.session_state.preferences)
+        else:
+            st.markdown("_Preferences will appear here once provided._") 
 
         if st.button("Clear Chat"):  
             st.session_state.messages = []  
             st.session_state.preferences = {}  
             st.rerun()  
 
-    st.markdown("""  
-    ### Welcome to your personal tour planner!   
-    I'll help you create the perfect one-day itinerary. Please tell me:  
-    - Which city you'd like to visit  
-    - Your available time  
-    - Your budget  
-    - Your interests (culture, food, adventure, etc.)  
-    - Your starting point (hotel/location)  
-    """)  
+    st.markdown("""
+    ### Welcome to your personal tour planner!
+    I'll help you create the perfect one-day itinerary. Please tell me:
+    - 📍 Which city you'd like to visit
+    - 🕒 Your available time
+    - 💰 Your budget
+    - 🎯 Your interests (culture, food, adventure, etc.)
+    - 🏨 Your starting point (hotel/location)
+    """) 
 
     for message in st.session_state.messages:  
         with st.chat_message(message["role"]):  
