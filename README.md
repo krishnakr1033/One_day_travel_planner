@@ -1,12 +1,13 @@
-# One-Day Tour Planning Assistant
+# One-Day Tour Planning Assistant (Powered with Agents)
 
-This project implements an intelligent one-day tour planning assistant that dynamically adjusts to user preferences through a chat-based interface. It personalizes itinerary suggestions based on user inputs, remembers preferences across conversations, and adapts seamlessly to evolving requirements.
+This project implements an intelligent one-day tour planning assistant that dynamically adjusts to user preferences through a chat-based interface. It personalizes itinerary suggestions based on user inputs, remembers preferences across conversations, and adapts seamlessly to evolving requirements. It also gives the suggestion. It is integrated with external weather API (Google Weather API, Google GeoCode API) as an agent, which llms call to see the weather condition on the hour basis for next 24 hours.
 
 ## Features
 - Personalized itinerary suggestions tailored to user preferences.
-<!-- - Memory management using **LLM-generated triplets** stored in a **Neo4j graph database**. -->
 - Real-time dynamic updates to the itinerary based on user feedback.
-- Supports at least three distinct user personas with unique preferences.
+- Gives User suggestion about which places/location could be visited in the city.
+- Integrated with external tools as agent, e.g. weather api based agent.
+- Finally generates the time frame based travel plan
 
 ## How to Run
 
@@ -18,13 +19,11 @@ pip install -r requirements.txt
 ```
 
 ### 2. Obtain Groq key and Configure Neo4j Credentials
-Create a Groq key and save it in a .env file in the root directory.Provide your Neo4j database credentials (URI, username, and password) in the .env file. The file should look like this:
+Create a Groq key and save it in a **.env** file in the root directory. Also get the google map api key, and make sure that it is activate for google weather and google geoCode.
 
 ```bash
-GROQ_KEY=your_groq_key_here
-NEO4J_PASSWORD=your_neo4j_password_here
-NEO4J_USER=your_neo4j_username_here
-NEO4J_URI=neo4j_uri
+GROQ_KEY= ************************
+GOOGLE_MAP_API_KEY= ************************
 ```
 ### 3. Lauch the Application
 Run the following command to start the application:
@@ -33,25 +32,32 @@ Run the following command to start the application:
 streamlit run app.py
 ```
 
-**Implementation Approach**
-
-<!-- * **Graph Database:**
-    * Utilize Neo4j to store and manage personas, traits, and user preferences.
-    * Model personas with their associated traits (preferred activities, interests) as nodes and relationships.
-    * Store user preferences (city, time_range, budget, interests, starting_point) as nodes and relationships. -->
+## Implementation Approach
 
 * **LLM Integration:**
     * Employ an LLM (e.g., llama3-8b-8192) for:
         * **User Interaction:** Handling user messages, providing information, and guiding the conversation.
         * **Preference Extraction:** Extracting user preferences from conversation history, considering persona traits.
-<!-- 
-* **Workflow:**
-    * **Initialize Personas:** Create persona nodes and their associated trait nodes in the graph.
-    * **User Interaction:**
-        * Process user messages using the LLM to maintain conversation flow.
-        * Extract user preferences from the conversation history.
-        * Store user preferences in the graph.
-    * **Personalized Recommendations:** 
-        * Use the graph to retrieve relevant information (e.g., persona preferences, user preferences) for personalized recommendations.
-**Implementation Workflow**
-<img src="tour_plan.png" alt="Flowchart of the Tour Planning Process" align="center" width="500px"> -->
+        * **Tool Calling:** On the basis of reasoning, it will act as agent and decide the input for tool (function) calling on its own.
+* **WeatherInfo Agent:**
+    * Tool is created as langchain wraper over function which call fetch the geographic data through location address followed by weather data through the api.
+    * Langchain based agent_executor to integrate the LLM and Tool to implement the ReAct based agent.
+    * In the image we can see the Reasoning and Acting process of the agent to fetch the information of weather as observation.
+    ![Screenshot](images/ToolCalling.png)
+
+
+## Streamlit Based Interface
+
+### Initial appearance of app
+![Screenshot](images/image1.png)
+
+### Providing the information related to travel plan of the day. The LLM ask the information that are required for make planner, in their response. Then as soon as the user provides the, it extract and stores it.
+![Screenshot](images/image2.png)
+
+### Upon asking it provided the suggestions also
+![Screenshot](images/image3.png)
+
+### Finally, it prepares the Planner, for the whole time interval (e.g. 7am to 7pm).
+![Screenshot](images/image4.png)
+
+### *Can Press the clear chat in the side bar to reset the chat space* 
